@@ -30,7 +30,7 @@ public class SmartCalcStack extends HttpServlet {
         int n = 0;
         int c = 0;
 
-      //  try{
+       try{
             for (int i = 0; i < str.length(); i++) {
                 try {
                     Integer.parseInt(str2[i]);
@@ -40,7 +40,8 @@ public class SmartCalcStack extends HttpServlet {
                         inorder[n++] = num;
                         num = "";
                     }
-                    /*if (str2[i].equals("-")) {
+                    /* -2 --> +(-2)
+                    if (str2[i].equals("-")) {
                         num = "-";
                         inorder[n++] = "+";
                         continue;
@@ -50,8 +51,6 @@ public class SmartCalcStack extends HttpServlet {
                 }
                 inorder[n] = num;
             }
-
-
 
             for (int i = 0; i < inorder.length; i++) {
                 try {
@@ -64,7 +63,13 @@ public class SmartCalcStack extends HttpServlet {
                             postorder[c++] = stack.pop();
                         }
                     }
+                    if (!stack.isEmpty()) {
+                        if (inorder[i].equals("+") | inorder[i].equals("-"))
+                            if (stack.peek().equals("+") | stack.peek().equals("-"))
+                                 postorder[c++] = stack.pop();
+                    }
                     stack.push(inorder[i]);
+
                     if (stack.peek().equals(")")) {
                         stack.pop();
                         while (!stack.peek().equals("(")) {
@@ -77,8 +82,6 @@ public class SmartCalcStack extends HttpServlet {
 
             while(!stack.isEmpty())
                 postorder[c++] = stack.pop();
-
-
 
             for (int i = 0; i < postorder.length; i++) {
                 try{
@@ -109,16 +112,13 @@ public class SmartCalcStack extends HttpServlet {
             }
             result = stack.pop();
             req.setAttribute("result", result);
-
-        /*}catch (Exception e){
+        }catch (Exception e){
             result = "올바른 표현식이 아닙니다.";
             req.setAttribute("result", result);
-        }*/
+        }
 
         RequestDispatcher rd = req.getRequestDispatcher("calc.jsp");
         rd.forward(req, resp);
-
-
 
     }
 }
